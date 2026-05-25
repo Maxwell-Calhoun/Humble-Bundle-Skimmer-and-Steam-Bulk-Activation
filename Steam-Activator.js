@@ -76,19 +76,14 @@ async function enterKeys(keys) {
   console.log("Failed keys:");
   console.log(output);
 
-  try {
-    await navigator.clipboard.writeText(output);
-    console.log("Failed keys copied to clipboard.");
-  } catch (err) {
-    console.log(
-      "Could not copy to clipboard automatically. Copy the failed keys from above.",
-    );
+  if (failedKeys.length > 0) {
+    prompt("Copy failed keys:", output);
   }
 
   alert(
     failedKeys.length === 0
       ? "Done. No failed keys detected."
-      : "Done. Failed keys were printed in the console and copied to clipboard.",
+      : `Done. Found ${failedKeys.length} failed keys.`,
   );
 }
 
