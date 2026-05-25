@@ -1,4 +1,5 @@
 # Humble-Bundle-Skimmer-and-Steam-Bulk-Activation
+
 A script that skims all of the keys present on a page of your keys for humble bundle and another script that will use the output to bulk activate the keys on steam.
 
 For both scripts you will just copy and pase the contents of the js and paste it in to web browser terminal and then type main(); into the terminal.
@@ -8,7 +9,7 @@ For the humble bundle skimmer you will just need to go the your keys and entitle
 For the steam script you will go to the link below and all that is required at this point is you copy and paste it into the terminal and it will ask you for the input and you will just paste it in. If you have a bunch of keys from another website and you want to use this all you will need to do is tokenize the keys in the following format. AAAAA-BBBBB-CCCCC,AAAAA-BBBBB-CCCCC,AAAAA-BBBBB-CCCCC using ',' as the delimiter.
 
 STEAM:
-https://store.steampowered.com/account/registerkey
+[https://store.steampowered.com/account/redeemwalletcode](https://store.steampowered.com/account/redeemwalletcode)
 
 NOTES:
 There is some kind of limit on how many keys can be activated about every hour from my testing and seems to be ~20 keys per hour you are allowed to activate and I am unaware of any way to get around this.
