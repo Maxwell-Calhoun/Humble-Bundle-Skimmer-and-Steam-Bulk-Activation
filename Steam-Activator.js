@@ -1,31 +1,113 @@
-function enterKey(k,c) {
-    key = document.getElementById("product_key");
-    register = document.getElementById("register_btn");
-    check = document.getElementById("accept_ssa");
-    
-    if (document.getElementById("error_display").visible()) {
-    	console.log("Key: " + k[c - 1] + " was not activated");
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+function parseKeys(input) {
+  return input
+    .split(",")
+    .map((key) => key.trim())
+    .filter((key) => key.length > 0);
+}
+
+function isVisible(el) {
+  if (!el) return false;
+
+  const style = window.getComputedStyle(el);
+
+  return (
+    style.display !== "none" &&
+    style.visibility !== "hidden" &&
+    el.offsetParent !== null
+  );
+}
+
+async function checkIfFailed() {
+  const errorDisplay = document.getElementById("error_display");
+
+  await delay(1500);
+
+  return isVisible(errorDisplay);
+}
+
+async function enterKeys(keys) {
+  const failedKeys = [];
+
+  for (let i = 0; i < keys.length; i++) {
+    const keyInput = document.getElementById("wallet_code");
+    const validateBtn = document.getElementById("validate_btn");
+    const errorDisplay = document.getElementById("error_display");
+
+    if (!keyInput || !validateBtn) {
+      console.error("Could not find the input box or submit button.");
+      return;
     }
-    
-    DisplayPage('code');
-    
-    if (!check.checked) {
-        check.click();
+
+    const currentKey = keys[i];
+
+    if (errorDisplay) {
+      errorDisplay.innerText = "";
+      errorDisplay.style.display = "none";
     }
-    
-    if (c < k.length && key.visible) {
-        key.value = k[c];
-        setTimeout(() => register.click(), 500);
-        c++;
-        setTimeout(() => enterKey(k,c), 3000);
-    }    
-    
+
+    console.log(`Trying key ${i + 1} of ${keys.length}: ${currentKey}`);
+
+    keyInput.value = currentKey;
+
+    keyInput.dispatchEvent(new Event("input", { bubbles: true }));
+    keyInput.dispatchEvent(new Event("change", { bubbles: true }));
+
+    await delay(500);
+
+    validateBtn.click();
+
+    const failed = await checkIfFailed();
+
+    if (failed) {
+      console.log(`Failed key: ${currentKey}`);
+      failedKeys.push(currentKey);
+    } else {
+      console.log(`No error detected for key: ${currentKey}`);
+    }
+
+    await delay(2000);
+  }
+
+  const output = failedKeys.join(",");
+
+  console.log("Done trying all keys.");
+  console.log("Failed keys:");
+  console.log(output);
+
+  try {
+    await navigator.clipboard.writeText(output);
+    console.log("Failed keys copied to clipboard.");
+  } catch (err) {
+    console.log(
+      "Could not copy to clipboard automatically. Copy the failed keys from above.",
+    );
+  }
+
+  alert(
+    failedKeys.length === 0
+      ? "Done. No failed keys detected."
+      : "Done. Failed keys were printed in the console and copied to clipboard.",
+  );
 }
 
 function main() {
-    DisplayPage('code');
-    counter = 0;
-    const input = prompt("Enter unparsed keys:");
-    keys = input.split(',');
-    enterKey(keys,counter);
+  const input = prompt("Enter keys separated by commas:");
+
+  if (!input) {
+    console.log("No keys entered.");
+    return;
+  }
+
+  const keys = parseKeys(input);
+
+  if (keys.length === 0) {
+    console.log("No valid keys found.");
+    return;
+  }
+
+  enterKeys(keys);
 }
+
+main();
